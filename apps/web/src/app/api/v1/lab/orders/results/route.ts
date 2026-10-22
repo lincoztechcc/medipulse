@@ -1,18 +1,25 @@
 import { NextRequest } from "next/server";
 import { LabRepository } from "@hospital/database";
-import { getAuthContext, jsonResponse } from "@/lib/auth-helpers";
+import { getAuthContext, jsonResponse, unauthorizedResponse } from "@/lib/auth-helpers";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const auth = await getAuthContext(req);
-  const tenantId = auth?.tenantId || "tenant-citycare-123";
+  if (!auth) {
+    return unauthorizedResponse("Authentication required to submit laboratory results");
+  }
+
+  const tenantId = auth.tenantId;
+  if (!tenantId) {
+    return unauthorizedResponse("Hospital tenant session required");
+  }
 
   try {
     const body = await req.json();
     const { labOrderId, results } = body;
 
-    if (!labOrderId || !results) {
+    if (!labOrderId || !results || !Array.isArray(results)) {
       return jsonResponse({ error: "labOrderId and results array are required" }, 400);
     }
 

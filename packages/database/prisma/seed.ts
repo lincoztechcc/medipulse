@@ -1,5 +1,6 @@
 import { PrismaClient, HospitalStatus, AppointmentStatus } from "@prisma/client";
 import { SystemRole, ROLE_DEFAULT_PERMISSIONS, PermissionCode } from "@hospital/permissions";
+import { hashPassword } from "@hospital/auth";
 
 const prisma = new PrismaClient();
 
@@ -102,7 +103,7 @@ async function main() {
   await prisma.user.create({
     data: {
       email: "superadmin@platform.com",
-      passwordHash: "hashed_Admin123!_secure",
+      passwordHash: hashPassword("Admin123!"),
       fullName: "Platform Super Admin",
       phone: "+92-300-0000000",
       roleId: roleMap[SystemRole.SUPER_ADMIN],
@@ -114,7 +115,7 @@ async function main() {
     data: {
       tenantId: tenant.id,
       email: "admin@citycare.com",
-      passwordHash: "hashed_Admin123!_secure",
+      passwordHash: hashPassword("Admin123!"),
       fullName: "Dr. Tariq Mahmood (Hospital Admin)",
       phone: "+92-300-1111111",
       roleId: roleMap[SystemRole.HOSPITAL_ADMIN],
@@ -143,7 +144,7 @@ async function main() {
     data: {
       tenantId: tenant.id,
       email: "dr.ali@citycare.com",
-      passwordHash: "hashed_Doctor123!_secure",
+      passwordHash: hashPassword("Doctor123!"),
       fullName: "Dr. Muhammad Ali",
       phone: "+92-300-2222222",
       roleId: roleMap[SystemRole.DOCTOR],
@@ -183,7 +184,7 @@ async function main() {
     data: {
       tenantId: tenant.id,
       email: "dr.fatima@citycare.com",
-      passwordHash: "hashed_Doctor123!_secure",
+      passwordHash: hashPassword("Doctor123!"),
       fullName: "Dr. Fatima Zahra",
       phone: "+92-300-3333333",
       roleId: roleMap[SystemRole.DOCTOR],
@@ -209,7 +210,7 @@ async function main() {
     data: {
       tenantId: tenant.id,
       email: "reception@citycare.com",
-      passwordHash: "hashed_Reception123!_secure",
+      passwordHash: hashPassword("Reception123!"),
       fullName: "Sarah Khan (Reception Desk)",
       roleId: roleMap[SystemRole.RECEPTIONIST],
     },
@@ -219,7 +220,7 @@ async function main() {
     data: {
       tenantId: tenant.id,
       email: "pharmacy@citycare.com",
-      passwordHash: "hashed_Pharmacy123!_secure",
+      passwordHash: hashPassword("Pharmacy123!"),
       fullName: "Usman Ahmed (Lead Pharmacist)",
       roleId: roleMap[SystemRole.PHARMACIST],
     },
@@ -229,7 +230,7 @@ async function main() {
     data: {
       tenantId: tenant.id,
       email: "lab@citycare.com",
-      passwordHash: "hashed_Lab123!_secure",
+      passwordHash: hashPassword("Lab123!"),
       fullName: "Zainab Bibi (Lab Senior Tech)",
       roleId: roleMap[SystemRole.LAB_TECHNICIAN],
     },
@@ -240,7 +241,7 @@ async function main() {
     data: {
       tenantId: tenant.id,
       email: "patient@citycare.com",
-      passwordHash: "hashed_Patient123!_secure",
+      passwordHash: hashPassword("Patient123!"),
       fullName: "Muhammad Usman",
       phone: "+92-321-9876543",
       roleId: roleMap[SystemRole.PATIENT],

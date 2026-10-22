@@ -1,15 +1,33 @@
 import { NextRequest } from "next/server";
-import { AppointmentRepository } from "@hospital/database";
+import { AppointmentRepository, TenantRepository } from "@hospital/database";
 import { getAuthContext, jsonResponse } from "@/lib/auth-helpers";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const auth = await getAuthContext(req);
-  const tenantId = auth?.tenantId || "tenant-citycare-123";
+  const body = await req.json().catch(() => ({}));
+
+  let tenantId = auth?.tenantId;
+
+  // For public booking through the hospital portal
+  if (!tenantId) {
+    if (body.tenantId) {
+      tenantId = body.tenantId;
+    } else {
+      const domainHeader = req.headers.get("x-tenant-domain");
+      if (domainHeader) {
+        const tenant = await TenantRepository.findByDomain(domainHeader.split(":")[0]);
+        tenantId = tenant?.id;
+      }
+    }
+  }
+
+  if (!tenantId) {
+    return jsonResponse({ error: "Hospital tenant could not be determined" }, 400);
+  }
 
   try {
-    const body = await req.json();
     const { patientId, doctorId, appointmentDate, timeSlot, fee, notes } = body;
 
     if (!patientId || !doctorId || !timeSlot) {

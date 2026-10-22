@@ -1,12 +1,19 @@
 import { NextRequest } from "next/server";
 import { prisma, LabRepository } from "@hospital/database";
-import { getAuthContext, jsonResponse } from "@/lib/auth-helpers";
+import { getAuthContext, jsonResponse, unauthorizedResponse } from "@/lib/auth-helpers";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const auth = await getAuthContext(req);
-  const tenantId = auth?.tenantId || "tenant-citycare-123";
+  if (!auth) {
+    return unauthorizedResponse("Authentication required to record clinical consultation");
+  }
+
+  const tenantId = auth.tenantId;
+  if (!tenantId) {
+    return unauthorizedResponse("Hospital tenant session required");
+  }
 
   try {
     const body = await req.json();
@@ -29,7 +36,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 2. Create Prescriptions if present
-    if (prescriptions && prescriptions.length > 0) {
+    if (prescriptions && Array.isArray(prescriptions) && prescriptions.length > 0) {
       const rx = await prisma.prescription.create({
         data: { consultationId: consultation.id },
       });
@@ -47,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Create Lab Order if present
-    if (labTests && labTests.length > 0) {
+    if (labTests && Array.isArray(labTests) && labTests.length > 0) {
       await LabRepository.createOrder(tenantId, patientId, labTests);
     }
 

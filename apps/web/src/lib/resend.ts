@@ -1,7 +1,17 @@
-const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_L6xAiLTJ_3iM4YCTwWpAHeYAHD7BszLdc";
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "MediPulse HMS <notifications@medipulse.app>";
 
 export async function sendOtpEmail(toEmail: string, otpCode: string, roleName: string) {
   try {
+    if (!RESEND_API_KEY) {
+      if (process.env.NODE_ENV === "production") {
+        console.error("[Email Error] RESEND_API_KEY is not configured in production environment.");
+        return { success: false, error: "Email delivery service is currently unconfigured" };
+      }
+      console.warn(`[DEV EMAIL MOCK] To: ${toEmail} | Role: ${roleName} | Code: [${otpCode}]`);
+      return { success: true, mocked: true };
+    }
+
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -9,11 +19,11 @@ export async function sendOtpEmail(toEmail: string, otpCode: string, roleName: s
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "MediPulse HMS <onboarding@resend.dev>",
+        from: RESEND_FROM_EMAIL,
         to: [toEmail],
         subject: `Your ${roleName} Login Verification Code: ${otpCode}`,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; rounded-radius: 12px; background-color: #ffffff;">
+          <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
             <div style="text-align: center; margin-bottom: 20px;">
               <h2 style="color: #0284c7; margin: 0;">MediPulse HMS</h2>
               <p style="color: #64748b; font-size: 12px; margin-top: 4px;">Multi-Tenant Hospital Management SaaS</p>
@@ -41,3 +51,4 @@ export async function sendOtpEmail(toEmail: string, otpCode: string, roleName: s
     return { success: false, error: error.message };
   }
 }
+
