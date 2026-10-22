@@ -1,0 +1,28 @@
+{
+  "name": "hospital-management-saas",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "postinstall": "prisma generate --schema=packages/database/prisma/schema.prisma",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "db:generate": "npm run --prefix packages/database generate",
+    "db:push": "npm run --prefix packages/database push",
+    "db:seed": "npm run --prefix packages/database seed"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "prisma": "^5.10.2",
+    "turbo": "^1.13.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 15, 23, 42;
+  --background-rgb: 248, 250, 252;
+}
+
+.dark {
+  --foreground-rgb: 248, 250, 252;
+  --background-rgb: 2, 6, 23;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Mascot Walking & Pedaling Animations as per Pixar Storyboard */
+@keyframes pedalWalk {
+  0% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-10px) rotate(-3deg); }
+  50% { transform: translateY(0px) rotate(0deg); }
+  75% { transform: translateY(-10px) rotate(3deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes walkInFromRight {
+  0% { transform: translateX(120vw) scale(0.95); opacity: 0; }
+  75% { transform: translateX(-15px) scale(1.01); opacity: 1; }
+  100% { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+@keyframes walkOutToLeft {
+  0% { transform: translateX(0) scale(1); opacity: 1; }
+  20% { transform: translateX(20px) scale(1.02); opacity: 1; }
+  100% { transform: translateX(-120vw) scale(0.95); opacity: 0; }
+}
+
+@keyframes subtleBreathe {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-4px) scale(1.015); }
+}
+
+@keyframes idleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-pedal-walk {
+  animation: pedalWalk 0.5s infinite ease-in-out;
+}
+
+.animate-walk-in {
+  animation: walkInFromRight 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-walk-out {
+  animation: walkOutToLeft 1.2s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+.animate-subtle-breathe {
+  animation: subtleBreathe 3s infinite ease-in-out;
+}
+
+.animate-idle-float {
+  animation: idleFloat 4s infinite ease-in-out;
+}
